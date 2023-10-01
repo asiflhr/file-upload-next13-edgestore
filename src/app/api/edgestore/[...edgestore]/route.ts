@@ -1,25 +1,25 @@
-import { initEdgeStore } from "@edgestore/server";
+import { initEdgeStore } from '@edgestore/server'
 import {
   CreateContextOptions,
   createEdgeStoreNextHandler,
-} from "@edgestore/server/adapters/next/app";
-import { z } from "zod";
+} from '@edgestore/server/adapters/next/app'
+import { z } from 'zod'
 
 type Context = {
-  userId: string;
-  userRole: "admin" | "user";
-};
+  userId: string
+  userRole: 'admin' | 'user'
+}
 
 function createContext({ req }: CreateContextOptions): Context {
   // get the session from your auth provider
   // const session = getSession(req);
   return {
-    userId: "1234",
-    userRole: "user",
-  };
+    userId: '1234',
+    userRole: 'user',
+  }
 }
 
-const es = initEdgeStore.context<Context>().create();
+const es = initEdgeStore.context<Context>().create()
 
 const edgeStoreRouter = es.router({
   myPublicImages: es
@@ -28,7 +28,7 @@ const edgeStoreRouter = es.router({
     })
     .input(
       z.object({
-        type: z.enum(["post", "profile"]),
+        type: z.enum(['post', 'profile']),
       })
     )
     // e.g. /post/my-file.jpg
@@ -41,20 +41,20 @@ const edgeStoreRouter = es.router({
     .accessControl({
       OR: [
         {
-          userId: { path: "owner" },
+          userId: { path: 'owner' },
         },
         {
-          userRole: { eq: "admin" },
+          userRole: { eq: 'admin' },
         },
       ],
     }),
-});
+})
 
 const handler = createEdgeStoreNextHandler({
   router: edgeStoreRouter,
   createContext,
-});
+})
 
-export { handler as GET, handler as POST };
+export { handler as GET, handler as POST }
 
-export type EdgeStoreRouter = typeof edgeStoreRouter;
+export type EdgeStoreRouter = typeof edgeStoreRouter
